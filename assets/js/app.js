@@ -50,7 +50,7 @@ function initGristCustomWidget() {
         // By default, display the front-view panel on the first load view in Grist
         if (isFirstLoad) {
             //showWidgetPanel('main');
-            showWidgetPanel('configuration');
+            showWidgetPanel('main');
         }
     });
 }
