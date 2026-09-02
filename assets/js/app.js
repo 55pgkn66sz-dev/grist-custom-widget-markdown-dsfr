@@ -16,15 +16,19 @@ function initGristCustomWidget() {
             // Display the back-office configuration view for widget settings. It's triggered when the user opens the widget settings in Grist.
             showWidgetPanel('configuration');
         },
-        // 'read table' is required so the widget can read columns (e.g. Actions) from the linked
-        // Grist table (Bandeaux_HTML) and expose them as Handlebars variables in the Markdown content.
-        requiredAccess: 'read table'
+        // 'full' access is required so the widget can read columns from the linked Grist table
+        // (Bandeaux_HTML) AND fetch other tables (e.g. Reservations_VMP) via grist.docApi.fetchTable,
+        // to expose them all as Handlebars variables in the Markdown content.
+        requiredAccess: 'full'
     });
 
     // Whenever the linked table's records change, keep the first record around so its columns
     // (e.g. Actions) can be used as Handlebars variables ({{{ Actions }}}) in the Markdown content.
+    // Merged (not overwritten) so values fetched from other tables (see fetchReservationsSrjCount)
+    // are preserved.
     grist.onRecords((records) => {
-        gristRecordContext = (records && records[0]) ? records[0] : {};
+        const bandeauRecord = (records && records[0]) ? records[0] : {};
+        gristRecordContext = {...gristRecordContext, ...bandeauRecord};
 
         // Re-render the Markdown body only, using the last known widget options, so the new
         // Grist column values are reflected without waiting for an options change.
@@ -32,6 +36,30 @@ function initGristCustomWidget() {
             updateFrontUI(storeCustomOptions);
         }
     });
+
+    // Fetches the Reservations_VMP table and counts rows whose "Actions" column contains
+    // "Action à réaliser par SRJ", exposing the result as the {{{ nombre_reservations_srj }}}
+    // Handlebars variable. Refreshed on load and every 10 seconds (this table isn't the widget's
+    // linked source table, so Grist doesn't push live updates for it automatically).
+    async function fetchReservationsSrjCount() {
+        try {
+            const table = await grist.docApi.fetchTable('Reservations_VMP');
+            const actionsColumn = table.Actions || [];
+            const count = actionsColumn.filter((value) =>
+                typeof value === 'string' && value.includes('Action à réaliser par SRJ')
+            ).length;
+
+            gristRecordContext = {...gristRecordContext, nombre_reservations_srj: count};
+            if (storeCustomOptions) {
+                updateFrontUI(storeCustomOptions);
+            }
+        } catch (e) {
+            console.error("[app-markdown-dsfr] Error fetching Reservations_VMP count:", e);
+        }
+    }
+
+    fetchReservationsSrjCount();
+    setInterval(fetchReservationsSrjCount, 10000);
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
