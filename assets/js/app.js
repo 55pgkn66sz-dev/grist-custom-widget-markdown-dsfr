@@ -39,7 +39,7 @@ function initGristCustomWidget() {
 
     // Fetches the Reservations_VMP table and counts rows whose "Actions" column contains
     // "Action à réaliser par SRJ", exposing the result as the {{{ nombre_reservations_srj }}}
-    // Handlebars variable. Refreshed on load and every 10 seconds (this table isn't the widget's
+    // Handlebars variable. Refreshed on load and every 5 minutes (this table isn't the widget's
     // linked source table, so Grist doesn't push live updates for it automatically).
     async function fetchReservationsSrjCount() {
         try {
@@ -59,7 +59,7 @@ function initGristCustomWidget() {
     }
 
     fetchReservationsSrjCount();
-    setInterval(fetchReservationsSrjCount, 10000);
+    setInterval(fetchReservationsSrjCount, 5 * 60 * 1000); // 5 minutes
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
