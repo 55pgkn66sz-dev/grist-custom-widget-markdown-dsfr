@@ -16,7 +16,21 @@ function initGristCustomWidget() {
             // Display the back-office configuration view for widget settings. It's triggered when the user opens the widget settings in Grist.
             showWidgetPanel('configuration');
         },
-        requiredAccess: 'none'
+        // 'read table' is required so the widget can read columns (e.g. Actions) from the linked
+        // Grist table (Bandeaux_HTML) and expose them as Handlebars variables in the Markdown content.
+        requiredAccess: 'read table'
+    });
+
+    // Whenever the linked table's records change, keep the first record around so its columns
+    // (e.g. Actions) can be used as Handlebars variables ({{{ Actions }}}) in the Markdown content.
+    grist.onRecords((records) => {
+        gristRecordContext = (records && records[0]) ? records[0] : {};
+
+        // Re-render the Markdown body only, using the last known widget options, so the new
+        // Grist column values are reflected without waiting for an options change.
+        if (storeCustomOptions) {
+            updateFrontUI(storeCustomOptions);
+        }
     });
 
     grist.onOptions((customOptions) => {
@@ -158,12 +172,22 @@ function updateFrontUI(customOptions) {
         const rawMarkdown = customOptions.markdown_content || '';
         const nodeMarkdown = document.getElementById('markdown-rendered');
 
+        // Substitute Grist column variables (e.g. {{{ Actions }}}) with the values read from
+        // the linked Bandeaux_HTML table before converting Markdown to HTML.
+        let markdownWithGristVariables = rawMarkdown;
+        try {
+            const template = Handlebars.compile(rawMarkdown, {noEscape: true});
+            markdownWithGristVariables = template(gristRecordContext || {});
+        } catch (e) {
+            console.error("[app-markdown-dsfr] Handlebars rendering markdown content error:", e);
+        }
+
         const md = window.markdownit({
             html: true,
             breaks: true,
             linkify: true
         }).use(window.markdownItAttrs);
-        nodeMarkdown.innerHTML = md.render(rawMarkdown);
+        nodeMarkdown.innerHTML = md.render(markdownWithGristVariables);
 
         _updateFrontUI_syntax_highlighting(customOptions, nodeMarkdown)
         initToc();
@@ -760,6 +784,9 @@ let codejarFooterCustomHtml = null;
 let codejarTocConfig = null;
 let storeCustomOptions = null;
 let pickrInstances = {};
+// Holds the first record of the linked Bandeaux_HTML table, refreshed by grist.onRecords().
+// Its fields (e.g. Actions) are used as Handlebars variables inside the Markdown content.
+let gristRecordContext = {};
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initializes custom elements in configuration view (EasyMDE markdown editor, codejar editors, colors picker...)
