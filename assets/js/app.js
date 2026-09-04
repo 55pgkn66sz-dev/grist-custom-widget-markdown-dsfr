@@ -73,12 +73,19 @@ function initGristCustomWidget() {
         return fetchAndCountRows('Reservations_VMP', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_vmp_sgr');
     }
 
+    // Reservations_tests_psy: rows with "Action à réaliser par SGR" in "Actions" -> {{{ nombre_reservations_tests_psy_sgr }}}
+    function fetchReservationsTestsPsySgrCount() {
+        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_tests_psy_sgr');
+    }
+
     fetchReservationsSrjCount();
     fetchReservationsSgrCount();
     fetchReservationsVmpSgrCount();
+    fetchReservationsTestsPsySgrCount();
     setInterval(fetchReservationsSrjCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsSgrCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsVmpSgrCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsTestsPsySgrCount, 5 * 60 * 1000); // 5 minutes
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
