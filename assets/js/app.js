@@ -37,29 +37,48 @@ function initGristCustomWidget() {
         }
     });
 
-    // Fetches the Reservations_VMP table and counts rows whose "Actions" column contains
-    // "Action à réaliser par SRJ", exposing the result as the {{{ nombre_reservations_srj }}}
-    // Handlebars variable. Refreshed on load and every 5 minutes (this table isn't the widget's
-    // linked source table, so Grist doesn't push live updates for it automatically).
-    async function fetchReservationsSrjCount() {
+    // Fetches a Grist table and counts rows whose given column contains a given substring,
+    // exposing the result as a Handlebars variable in the Markdown content. Refreshed on load
+    // and every 5 minutes (these tables aren't the widget's linked source table, so Grist
+    // doesn't push live updates for them automatically).
+    async function fetchAndCountRows(tableId, columnId, matchSubstring, variableName) {
         try {
-            const table = await grist.docApi.fetchTable('Reservations_VMP');
-            const actionsColumn = table.Actions || [];
-            const count = actionsColumn.filter((value) =>
-                typeof value === 'string' && value.includes('Action à réaliser par SRJ')
+            const table = await grist.docApi.fetchTable(tableId);
+            const column = table[columnId] || [];
+            const count = column.filter((value) =>
+                typeof value === 'string' && value.includes(matchSubstring)
             ).length;
 
-            gristRecordContext = {...gristRecordContext, nombre_reservations_srj: count};
+            gristRecordContext = {...gristRecordContext, [variableName]: count};
             if (storeCustomOptions) {
                 updateFrontUI(storeCustomOptions);
             }
         } catch (e) {
-            console.error("[app-markdown-dsfr] Error fetching Reservations_VMP count:", e);
+            console.error(`[app-markdown-dsfr] Error fetching ${tableId} count:`, e);
         }
     }
 
+    // Reservations_VMP: rows with "Action à réaliser par SRJ" in "Actions" -> {{{ nombre_reservations_srj }}}
+    function fetchReservationsSrjCount() {
+        return fetchAndCountRows('Reservations_VMP', 'Actions', 'Action à réaliser par SRJ', 'nombre_reservations_srj');
+    }
+
+    // Reservations_VEMI: rows with "Action à réaliser par SGR" in "Actions" -> {{{ nombre_reservations_sgr }}}
+    function fetchReservationsSgrCount() {
+        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_sgr');
+    }
+
+    // Reservations_VMP: rows with "Action à réaliser par SGR" in "Actions" -> {{{ nombre_reservations_vmp_sgr }}}
+    function fetchReservationsVmpSgrCount() {
+        return fetchAndCountRows('Reservations_VMP', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_vmp_sgr');
+    }
+
     fetchReservationsSrjCount();
+    fetchReservationsSgrCount();
+    fetchReservationsVmpSgrCount();
     setInterval(fetchReservationsSrjCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsSgrCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsVmpSgrCount, 5 * 60 * 1000); // 5 minutes
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
