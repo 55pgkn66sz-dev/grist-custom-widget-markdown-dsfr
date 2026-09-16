@@ -58,9 +58,9 @@ function initGristCustomWidget() {
         }
     }
 
-    // Reservations_VMP: rows with "Action à réaliser par SRJ" in "Actions" -> {{{ nombre_reservations_srj }}}
+    // Reservations_VMP: rows with "SRJ" in "Actions" -> {{{ nombre_reservations_srj }}}
     function fetchReservationsSrjCount() {
-        return fetchAndCountRows('Reservations_VMP', 'Actions', 'Action à réaliser par SRJ', 'nombre_reservations_srj');
+        return fetchAndCountRows('Reservations_VMP', 'Actions', 'SRJ', 'nombre_reservations_srj');
     }
 
     // Reservations_VEMI: rows with "Action à réaliser par SGR" in "Actions" -> {{{ nombre_reservations_sgr }}}
@@ -78,24 +78,24 @@ function initGristCustomWidget() {
         return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_tests_psy_sgr');
     }
 
-    // Reservations_tests_psy: rows with "Action à réaliser par pôle RH" in "Actions" -> {{{ nombre_reservations_tests_psy_rh }}}
+    // Reservations_tests_psy: rows with "Pôle RH" in "Actions" -> {{{ nombre_reservations_tests_psy_rh }}}
     function fetchReservationsTestsPsyRhCount() {
-        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par pôle RH', 'nombre_reservations_tests_psy_rh');
+        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Pôle RH', 'nombre_reservations_tests_psy_rh');
     }
 
-    // Reservations_tests_psy: rows with "Action à réaliser par pôle PMG" in "Actions" -> {{{ nombre_reservations_tests_psy_pmg }}}
+    // Reservations_tests_psy: rows with "Pôle PMG" in "Actions" -> {{{ nombre_reservations_tests_psy_pmg }}}
     function fetchReservationsTestsPsyPmgCount() {
-        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par pôle PMG', 'nombre_reservations_tests_psy_pmg');
+        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Pôle PMG', 'nombre_reservations_tests_psy_pmg');
     }
 
-    // Reservations_VEMI: rows with "Action à réaliser par pôle RH" in "Actions" -> {{{ nombre_reservations_vemi_rh }}}
+    // Reservations_VEMI: rows with "Pôle RH" in "Actions" -> {{{ nombre_reservations_vemi_rh }}}
     function fetchReservationsVemiRhCount() {
-        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Action à réaliser par pôle RH', 'nombre_reservations_vemi_rh');
+        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Pôle RH', 'nombre_reservations_vemi_rh');
     }
 
-    // Reservations_VEMI: rows with "Action à réaliser par pôle PMG" in "Actions" -> {{{ nombre_reservations_vemi_pmg }}}
+    // Reservations_VEMI: rows with "Pôle PMG" in "Actions" -> {{{ nombre_reservations_vemi_pmg }}}
     function fetchReservationsVemiPmgCount() {
-        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Action à réaliser par pôle PMG', 'nombre_reservations_vemi_pmg');
+        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Pôle PMG', 'nombre_reservations_vemi_pmg');
     }
 
     fetchReservationsSrjCount();
