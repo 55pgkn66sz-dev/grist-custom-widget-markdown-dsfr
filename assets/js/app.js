@@ -78,14 +78,42 @@ function initGristCustomWidget() {
         return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par SGR', 'nombre_reservations_tests_psy_sgr');
     }
 
+    // Reservations_tests_psy: rows with "Action à réaliser par pôle RH" in "Actions" -> {{{ nombre_reservations_tests_psy_rh }}}
+    function fetchReservationsTestsPsyRhCount() {
+        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par pôle RH', 'nombre_reservations_tests_psy_rh');
+    }
+
+    // Reservations_tests_psy: rows with "Action à réaliser par pôle PMG" in "Actions" -> {{{ nombre_reservations_tests_psy_pmg }}}
+    function fetchReservationsTestsPsyPmgCount() {
+        return fetchAndCountRows('Reservations_tests_psy', 'Actions', 'Action à réaliser par pôle PMG', 'nombre_reservations_tests_psy_pmg');
+    }
+
+    // Reservations_VEMI: rows with "Action à réaliser par pôle RH" in "Actions" -> {{{ nombre_reservations_vemi_rh }}}
+    function fetchReservationsVemiRhCount() {
+        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Action à réaliser par pôle RH', 'nombre_reservations_vemi_rh');
+    }
+
+    // Reservations_VEMI: rows with "Action à réaliser par pôle PMG" in "Actions" -> {{{ nombre_reservations_vemi_pmg }}}
+    function fetchReservationsVemiPmgCount() {
+        return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Action à réaliser par pôle PMG', 'nombre_reservations_vemi_pmg');
+    }
+
     fetchReservationsSrjCount();
     fetchReservationsSgrCount();
     fetchReservationsVmpSgrCount();
     fetchReservationsTestsPsySgrCount();
+    fetchReservationsTestsPsyRhCount();
+    fetchReservationsTestsPsyPmgCount();
+    fetchReservationsVemiRhCount();
+    fetchReservationsVemiPmgCount();
     setInterval(fetchReservationsSrjCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsSgrCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsVmpSgrCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsTestsPsySgrCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsTestsPsyRhCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsTestsPsyPmgCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsVemiRhCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchReservationsVemiPmgCount, 5 * 60 * 1000); // 5 minutes
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
