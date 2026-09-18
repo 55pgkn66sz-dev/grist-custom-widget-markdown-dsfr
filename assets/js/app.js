@@ -98,6 +98,21 @@ function initGristCustomWidget() {
         return fetchAndCountRows('Reservations_VEMI', 'Actions', 'Pôle PMG', 'nombre_reservations_vemi_pmg');
     }
 
+    // Gestion_des_absences: rows with "En attente" in "Décision" -> {{{ nombre_absences_en_attente }}}
+    function fetchAbsencesEnAttenteCount() {
+        return fetchAndCountRows('Gestion_des_absences', 'Décision', 'En attente', 'nombre_absences_en_attente');
+    }
+
+    // Reservations_vehicules: rows with "En attente" in "Décision" -> {{{ nombre_vehicules_en_attente }}}
+    function fetchVehiculesEnAttenteCount() {
+        return fetchAndCountRows('Reservations_vehicules', 'Décision', 'En attente', 'nombre_vehicules_en_attente');
+    }
+
+    // Reservations_materiels: rows with "En attente" in "Décision" -> {{{ nombre_materiels_en_attente }}}
+    function fetchMaterielsEnAttenteCount() {
+        return fetchAndCountRows('Reservations_materiels', 'Décision', 'En attente', 'nombre_materiels_en_attente');
+    }
+
     fetchReservationsSrjCount();
     fetchReservationsSgrCount();
     fetchReservationsVmpSgrCount();
@@ -106,6 +121,9 @@ function initGristCustomWidget() {
     fetchReservationsTestsPsyPmgCount();
     fetchReservationsVemiRhCount();
     fetchReservationsVemiPmgCount();
+    fetchAbsencesEnAttenteCount();
+    fetchVehiculesEnAttenteCount();
+    fetchMaterielsEnAttenteCount();
     setInterval(fetchReservationsSrjCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsSgrCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsVmpSgrCount, 5 * 60 * 1000); // 5 minutes
@@ -114,6 +132,9 @@ function initGristCustomWidget() {
     setInterval(fetchReservationsTestsPsyPmgCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsVemiRhCount, 5 * 60 * 1000); // 5 minutes
     setInterval(fetchReservationsVemiPmgCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchAbsencesEnAttenteCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchVehiculesEnAttenteCount, 5 * 60 * 1000); // 5 minutes
+    setInterval(fetchMaterielsEnAttenteCount, 5 * 60 * 1000); // 5 minutes
 
     grist.onOptions((customOptions) => {
         const isFirstLoad = !storeCustomOptions;
